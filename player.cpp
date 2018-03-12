@@ -8,9 +8,9 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
-    std::cerr << "hi";
-    Side mySide = side;
-    Board *myBoard = new Board();
+    std::cerr << "hi" << std::endl;
+    mySide = side;
+    myBoard = new Board();
     /*
      * TODO: Do any initialization you need to do here (setting up the board,
      * precalculating things, etc.) However, remember that you will only have
@@ -43,7 +43,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * process the opponent's opponents move before calculating your own move
      */
 
-    std::cerr << "here";
+    std::cerr << "here" << std::endl;
     Side otherSide;
     if (mySide == WHITE)
     {
@@ -58,10 +58,39 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     if (myBoard->hasMoves(mySide))
     {
         std::vector<Move*> v = myBoard->getAllMoves(mySide);
+        Move * final;
+        int high;
+        for (int i = 0; i < v.size(); i++)
+        {
+            Board * tempBoard = myBoard->copy();
+            tempBoard->doMove(v[i], mySide);
+            int diff = tempBoard->count(mySide) - myBoard->count(mySide);
+            if (i == 0)
+            {
+                final = v[0];
+                high = diff;
+            }
+            else
+            {
+                if (diff > high)
+                {
+                    final = v[i];
+                    high = diff;
+                }
+            }
+        }
+        myBoard->doMove(final, mySide);
+        return final;
+    }
+
+    /*
+    if (myBoard->hasMoves(mySide))
+    {
+        std::vector<Move*> v = myBoard->getAllMoves(mySide);
         myBoard->doMove(v[0], mySide);
         return v[0];
     }
-    /*
+
     if (myBoard->hasMoves(mySide))
     {
         for (int i = 0; i < 8; i++) {
